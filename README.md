@@ -31,7 +31,8 @@ if `GenerateKey` is set to false, `KeyPath` has to be specified, pointing to a l
       type: apt
       sources:
         packages:
-            - "minisign" ``` note that the keys must be named `minisign.pub`
-(public) and `minisign.key` (private) in this example the minisign keys would be in `includes.container/etc/minisign/`, which translates to `/etc/minisign** in the build environment
+            - "minisign" 
+``` 
+note that the keys must be named `minisign.pub` (public) and `minisign.key` (private) in this example the minisign keys would be in `includes.container/etc/minisign/`, which translates to `/etc/minisign** in the build environment
 
 keep in mind that the minisign key **cannot** be password protected, as there is no way for the user to type in the password during building (which is why always generting a random key through GenerateKey is recommended)
