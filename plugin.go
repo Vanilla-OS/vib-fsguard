@@ -1,3 +1,6 @@
+// Copyright 2024, axtlos <axtlos@disroot.org>
+// SPDX-License-Identifier: GPL-3.0-ONLY
+
 package main
 
 import (
@@ -42,7 +45,7 @@ func writeFilelistScript(module FsGuardModule, recipe *api.Recipe) error {
 	script = `while [ $# -gt 0 ]; do
     BASEPATH="$1"
     for f in $(ls -1 $BASEPATH); do
-        echo "$BASEPATH/$f $(sha1sum $BASEPATH/$f | sed 's/ .*//g') $(ls -al $BASEPATH/$f | awk 'BEGIN{FS=" "}; {print $1};' | grep s > /dev/null && echo "true" || echo "false")" >> /FsGuard/filelist
+        echo "$BASEPATH/$f #FSG# $(sha1sum /bin/tcsh | sed 's|  /bin/tcsh||g') #FSG# $(ls -al /bin/tcsh | awk 'BEGIN{FS=" "}; {print $1};' | grep s > /dev/null && echo "true" || echo "false")"
     done
     shift
 done`
