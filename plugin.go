@@ -20,7 +20,7 @@ type FsGuardModule struct {
 }
 
 var FSGUARD_URL string = "https://github.com/linux-immutability-tools/FsGuard/releases/download/v0.1.2/FsGuard_0.1.2_linux_amd64.tar.gz"
-var FSGUARD_CHECKSUM string = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+var FSGUARD_CHECKSUM string = "48cae4a50cf71f0387bbf7d31f3dbcee1917667120a652037623c775af97b547"
 
 var prepCommands []string
 var mainCommands []string
@@ -48,8 +48,8 @@ func writeFilelistScript(module FsGuardModule, recipe *api.Recipe) error {
 done`
 	prepCommands = append(prepCommands, "mkdir /FsGuard")
 	prepCommands = append(prepCommands, fmt.Sprintf("chmod +x /sources/%s/gen_filelist", module.Name))
-	os.MkdirAll(recipe.SourcesPath+module.Name, 0666)
-	err := os.WriteFile(recipe.SourcesPath+module.Name+"gen_filelist", []byte(script), 0666)
+	os.MkdirAll(recipe.SourcesPath+"/"+module.Name, 0666)
+	err := os.WriteFile(recipe.SourcesPath+"/"+module.Name+"/gen_filelist", []byte(script), 0666)
 	return err
 }
 
