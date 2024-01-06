@@ -99,5 +99,5 @@ func BuildModule(moduleInterface interface{}, recipe *api.Recipe) (string, error
 
 	cmd := append(append(prepCommands, mainCommands...), cleanCommands...)
 
-	return strings.Join(cmd[:], " && "), nil
+	return strings.Join(cmd, " && "), nil
 }
