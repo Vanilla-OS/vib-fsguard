@@ -45,7 +45,7 @@ func writeFilelistScript(module FsGuardModule, recipe *api.Recipe) error {
 	script = `while [ $# -gt 0 ]; do
     BASEPATH="$1"
     for f in $(ls -1 $BASEPATH); do
-        echo "$BASEPATH/$f #FSG# $(sha1sum /bin/tcsh | sed 's|  /bin/tcsh||g') #FSG# $(ls -al /bin/tcsh | awk 'BEGIN{FS=" "}; {print $1};' | grep s > /dev/null && echo "true" || echo "false")"
+        echo $BASEPATH/$f #FSG# $(sha1sum $BASEPATH/$f | sed "s|  $BASEPATH/$f||g") #FSG# $(ls -al $BASEPATH/$f | awk 'BEGIN{FS=" "}; {print $1};' | grep s > /dev/null && echo "true" || echo "false")
     done
     shift
 done`
@@ -81,18 +81,18 @@ func BuildModule(moduleInterface interface{}, recipe *api.Recipe) (string, error
 		return "", err
 	}
 
-	cleanCommands = append(cleanCommands, fmt.Sprintf("mv /sources/%s/FsGuard %s", module.Name, module.FsGuardLocation))
+	cleanCommands = append(cleanCommands, fmt.Sprintf("mv /sources/FsGuard %s", module.FsGuardLocation))
 
 	if module.GenerateKey {
-		prepCommands = append(prepCommands, "minisign -WG -s ./minisign.sec")
-		cleanCommands = append(cleanCommands, "rm ./minisign.sec ./minisign.pub")
+		prepCommands = append(prepCommands, "minisign -WG -s ./minisign.key")
+		cleanCommands = append(cleanCommands, "rm ./minisign.key ./minisign.pub")
 		module.KeyPath = "./"
 	} else if len(strings.TrimSpace(module.KeyPath)) == 0 {
 		return "", fmt.Errorf("Keypath not specified and GenerateKey set to false. Cannot proceed")
 	}
 
 	for _, listDirectories := range module.FilelistPaths {
-		mainCommands = append(mainCommands, fmt.Sprintf("/sources/%s/gen_filelist %s", module.Name, listDirectories))
+		mainCommands = append(mainCommands, fmt.Sprintf("/sources/%s/gen_filelist %s >> /FsGuard/filelist", module.Name, listDirectories))
 	}
 
 	signFileList(module)
