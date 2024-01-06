@@ -51,8 +51,8 @@ func writeFilelistScript(module FsGuardModule, recipe *api.Recipe) error {
 done`
 	prepCommands = append(prepCommands, "mkdir /FsGuard")
 	prepCommands = append(prepCommands, fmt.Sprintf("chmod +x /sources/%s/gen_filelist", module.Name))
-	os.MkdirAll(recipe.SourcesPath+"/"+module.Name, 0666)
-	err := os.WriteFile(recipe.SourcesPath+"/"+module.Name+"/gen_filelist", []byte(script), 0666)
+	os.MkdirAll(recipe.SourcesPath+"/"+module.Name, 0777)
+	err := os.WriteFile(recipe.SourcesPath+"/"+module.Name+"/gen_filelist", []byte(script), 0777)
 	return err
 }
 
