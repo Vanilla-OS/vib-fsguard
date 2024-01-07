@@ -16,6 +16,7 @@ type FsGuardModule struct {
 	Name string `json:"name"`
 	Type string `json:"type"`
 
+	CustomFsGuard   bool     `json:"customfsguard"`
 	FsGuardLocation string   `json:"fsguardlocation`
 	GenerateKey     bool     `json:"genkey"`
 	KeyPath         string   `json:"keypath"`
@@ -61,7 +62,7 @@ func signFileList(module FsGuardModule) {
 	mainCommands = append(mainCommands, "touch /FsGuard/signature")
 	mainCommands = append(mainCommands, "echo -n \"----begin attach----\" >> /FsGuard/signature")
 	mainCommands = append(mainCommands, "cat /FsGuard/filelist.minisig >> /FsGuard/signature")
-	mainCommands = append(mainCommands, " echo -n \"----begin second attach----\" >> /FsGuard/signature")
+	mainCommands = append(mainCommands, "echo -n \"----begin second attach----\" >> /FsGuard/signature")
 	mainCommands = append(mainCommands, fmt.Sprintf("tail -n1 %s/minisign.pub >> /FsGuard/signature", module.KeyPath))
 	mainCommands = append(mainCommands, "cat /FsGuard/signature >> /sources/FsGuard")
 }

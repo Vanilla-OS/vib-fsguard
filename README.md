@@ -8,6 +8,7 @@ This plugin requires that `minisign` is installed in the image, this can be easi
 ```yaml
 - name: fsguard
   type: fsguard
+  CustomFsGuard: false
   FsGuardLocation: "/usr/bin/"
   GenerateKey: true
   FilelistPaths: ["/usr/bin/"]
@@ -22,6 +23,7 @@ if `GenerateKey` is set to false, `KeyPath` has to be specified, pointing to a l
 ```yaml
 - name: fsguard
   type: fsguard
+  CustomFsGuard: false
   FsGuardLocation: "/usr/bin/"
   GenerateKey: false
   KeyPath: "/etc/minisign/"
@@ -36,3 +38,5 @@ if `GenerateKey` is set to false, `KeyPath` has to be specified, pointing to a l
 note that the keys must be named `minisign.pub` (public) and `minisign.key` (private) in this example the minisign keys would be in `includes.container/etc/minisign/`, which translates to `/etc/minisign** in the build environment
 
 keep in mind that the minisign key **cannot** be password protected, as there is no way for the user to type in the password during building (which is why always generting a random key through GenerateKey is recommended)
+
+In the case that FsGuard has to be manually built (due to a configuration change or similiar), the `CustomFsGuard` option has to be set to True, this stops the module from fetching a prebuilt FsGuard and instead allows the user to manually build FsGuard, it does however expect the FsGuard binary to be at `/sources/FsGuard`
