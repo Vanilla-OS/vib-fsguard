@@ -63,7 +63,7 @@ func signFileList(module FsGuardModule) {
 	mainCommands = append(mainCommands, "cat /FsGuard/filelist.minisig >> /FsGuard/signature")
 	mainCommands = append(mainCommands, " echo -n \"----begin second attach----\" >> /FsGuard/signature")
 	mainCommands = append(mainCommands, fmt.Sprintf("tail -n1 %s/minisign.pub >> /FsGuard/signature", module.KeyPath))
-	mainCommands = append(mainCommands, "cat /FsGuard/signature >> /usr/bin/FsGuard")
+	mainCommands = append(mainCommands, "cat /FsGuard/signature >> /sources/FsGuard")
 }
 
 func BuildModule(moduleInterface interface{}, recipe *api.Recipe) (string, error) {
