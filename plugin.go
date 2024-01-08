@@ -46,7 +46,7 @@ func writeFilelistScript(module FsGuardModule, recipe *api.Recipe) error {
 	script = `while [ $# -gt 0 ]; do
     BASEPATH="$1"
     for f in $(ls -1 $BASEPATH); do
-        echo $BASEPATH/$f #FSG# $(sha1sum $BASEPATH/$f | sed "s|  $BASEPATH/$f||g") #FSG# $(ls -al $BASEPATH/$f | awk 'BEGIN{FS=" "}; {print $1};' | grep s > /dev/null && echo "true" || echo "false")
+        echo $BASEPATH/$f \#FSG\# $(sha1sum $BASEPATH/$f | sed "s|  $BASEPATH/$f||g") \#FSG\# $(ls -al $BASEPATH/$f | awk 'BEGIN{FS=" "}; {print $1};' | grep s > /dev/null && echo "true" || echo "false")
     done
     shift
 done`
