@@ -23,8 +23,8 @@ type FsGuardModule struct {
 	FilelistPaths   []string `json:"filelistpaths"`
 }
 
-var FSGUARD_URL string = "https://github.com/linux-immutability-tools/FsGuard/releases/download/v0.1.2/FsGuard_0.1.2_linux_amd64.tar.gz"
-var FSGUARD_CHECKSUM string = "48cae4a50cf71f0387bbf7d31f3dbcee1917667120a652037623c775af97b547"
+var FSGUARD_URL string = "https://github.com/linux-immutability-tools/FsGuard/releases/download/v0.1.2-1/FsGuard_0.1.2-1_linux_amd64.tar.gz"
+var FSGUARD_CHECKSUM string = "dbd71388f8591fe8dfdbdc57a004e4df02a8f495caa4081e959d6d66cd494f1e"
 
 var prepCommands []string
 var mainCommands []string
