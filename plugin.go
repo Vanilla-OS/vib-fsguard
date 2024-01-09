@@ -5,11 +5,11 @@ package main
 
 import (
 	"fmt"
-	"os"
-	"strings"
-
 	"github.com/mitchellh/mapstructure"
 	"github.com/vanilla-os/vib/api"
+	"os"
+	"path/filepath"
+	"strings"
 )
 
 type FsGuardModule struct {
@@ -26,6 +26,9 @@ type FsGuardModule struct {
 var FSGUARD_URL string = "https://github.com/linux-immutability-tools/FsGuard/releases/download/v0.1.2-1/FsGuard_0.1.2-1_linux_amd64.tar.gz"
 var FSGUARD_CHECKSUM string = "dbd71388f8591fe8dfdbdc57a004e4df02a8f495caa4081e959d6d66cd494f1e"
 
+var GENFILELIST_URL string = "https://raw.githubusercontent.com/Vanilla-OS/vib-fsguard/main/genfilelist.py"
+var GENFILELIST_CHECKSUM string = "55d575f65613a2de43344f9502734e001a89a036670f6e44e9292a6d33beeb64"
+
 var prepCommands []string
 var mainCommands []string
 var cleanCommands []string
@@ -41,20 +44,17 @@ func fetchFsGuard(module FsGuardModule, recipe *api.Recipe) error {
 	return err
 }
 
-func writeFilelistScript(module FsGuardModule, recipe *api.Recipe) error {
-	var script string
-	script = `while [ $# -gt 0 ]; do
-    BASEPATH="$1"
-    for f in $(ls -1 $BASEPATH); do
-        echo $BASEPATH/$f \#FSG\# $(sha1sum $BASEPATH/$f | sed "s|  $BASEPATH/$f||g") \#FSG\# $(ls -al $BASEPATH/$f | awk 'BEGIN{FS=" "}; {print $1};' | grep s > /dev/null && echo "true" || echo "false")
-    done
-    shift
-done`
+func fetchFileListScript(module FsGuardModule, recipe *api.Recipe) error {
+	var source api.Source
+	source = api.Source{URL: GENFILELIST_URL, Type: "single", Checksum: GENFILELIST_CHECKSUM}
+	api.DownloadTarSource(recipe.DownloadsPath, source, module.Name)
+	err := os.Rename(filepath.Join(recipe.DownloadsPath, module.Name), filepath.Join(recipe.SourcesPath, module.Name))
+	if err != nil {
+		return err
+	}
 	prepCommands = append(prepCommands, "mkdir /FsGuard")
-	prepCommands = append(prepCommands, fmt.Sprintf("chmod +x /sources/%s/gen_filelist", module.Name))
-	os.MkdirAll(recipe.SourcesPath+"/"+module.Name, 0777)
-	err := os.WriteFile(recipe.SourcesPath+"/"+module.Name+"/gen_filelist", []byte(script), 0777)
-	return err
+	prepCommands = append(prepCommands, fmt.Sprintf("chmod +x /sources/%s/genfilelist.py", module.Name))
+	return nil
 }
 
 func signFileList(module FsGuardModule) {
@@ -77,7 +77,7 @@ func BuildModule(moduleInterface interface{}, recipe *api.Recipe) (string, error
 	if err != nil {
 		return "", err
 	}
-	err = writeFilelistScript(module, recipe)
+	err = fetchFileListScript(module, recipe)
 	if err != nil {
 		return "", err
 	}
@@ -93,7 +93,7 @@ func BuildModule(moduleInterface interface{}, recipe *api.Recipe) (string, error
 	}
 
 	for _, listDirectories := range module.FilelistPaths {
-		mainCommands = append(mainCommands, fmt.Sprintf("/sources/%s/gen_filelist %s >> /FsGuard/filelist", module.Name, listDirectories))
+		mainCommands = append(mainCommands, fmt.Sprintf("python3 /sources/%s/genfilelist.py %s /FsGuard/filelist %s", module.Name, listDirectories, module.FsGuardLocation))
 	}
 
 	signFileList(module)
