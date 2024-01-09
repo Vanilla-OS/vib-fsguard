@@ -48,7 +48,11 @@ func fetchFileListScript(module FsGuardModule, recipe *api.Recipe) error {
 	var source api.Source
 	source = api.Source{URL: GENFILELIST_URL, Type: "single", Checksum: GENFILELIST_CHECKSUM}
 	api.DownloadTarSource(recipe.DownloadsPath, source, module.Name)
-	err := os.Rename(filepath.Join(recipe.DownloadsPath, module.Name), filepath.Join(recipe.SourcesPath, module.Name))
+	err := os.MkdirAll(filepath.Join(recipe.SourcesPath, module.Name), 0777)
+	if err != nil {
+		return err
+	}
+	err = os.Rename(filepath.Join(recipe.DownloadsPath, module.Name), filepath.Join(recipe.SourcesPath, module.Name, "genfilelist.py"))
 	if err != nil {
 		return err
 	}
