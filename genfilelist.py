@@ -22,7 +22,7 @@ import sys
 import datetime
 
 
-def log(message: str):
+def log(message: str) -> None:
     """
     Logs a message with a timestamp and adds it to the global log list.
 
@@ -34,7 +34,7 @@ def log(message: str):
     print(message)
 
 
-def print_help():
+def print_help() -> None:
     """
     Prints the help message for using the script.
     """
@@ -101,7 +101,7 @@ def main(
     fsguard_binary: str,
     verbose: bool = False,
     log_file: str = None,
-):
+) -> None:
     """
     Generates a file list with checksums and suid information for files in a given path.
 
@@ -158,11 +158,13 @@ if __name__ == "__main__":
     fsguard_binary = sys.argv[3]
     verbose = "--verbose" in sys.argv
     log_file = None
+
     if "--log-file" in sys.argv:
         log_file_index = sys.argv.index("--log-file")
         log_file = (
             sys.argv[log_file_index + 1] if log_file_index + 1 < len(sys.argv) else None
         )
+
     main(
         path=path,
         filelist=filelist,
