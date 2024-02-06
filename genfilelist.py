@@ -21,6 +21,8 @@ import hashlib
 import sys
 import datetime
 
+from os.path import isfile
+
 
 def log(message: str) -> None:
     """
@@ -115,22 +117,27 @@ def main(
     binaries: list[str] = []
     for dirpath, _, filenames in os.walk(path):
         for file in filenames:
-            if not fsguard_binary.strip() in dirpath + "/" + file:
+            if fsguard_binary.strip() not in dirpath + "/" + file:
                 filepath = dirpath + "/" + file
-                filepath = os.path.abspath(
-                    dirpath + "/" + get_symlink(filepath)
-                    if get_symlink(filepath) != ""
-                    else filepath
-                )
-                if not os.path.isfile(filepath):
-                    filepath = os.path.abspath(get_symlink(dirpath + "/" + file))
+
+                # Check if file is symlink, skip file if symlink is broken
+                file_link = get_symlink(filepath)
+                if file_link:
+                    if not isfile(file_link):
+                        continue
+                    filepath = os.path.abspath(dirpath + "/" + file_link)
+
+                if not isfile(filepath):
+                    filepath = os.path.abspath(
+                        get_symlink(dirpath + "/" + file))
                 suid = is_suid(filepath)
 
                 log(f"Processing: {filepath}")
 
                 binaries.append(
                     "{} #FSG# {} #FSG# {}".format(
-                        filepath, calc_checksum(filepath), "true" if suid else "false"
+                        filepath, calc_checksum(
+                            filepath), "true" if suid else "false"
                     )
                 )
 
@@ -148,11 +155,11 @@ def main(
 
 
 if __name__ == "__main__":
+    log_list = []
     if len(sys.argv) < 4 or "--help" in sys.argv:
         print_help()
         sys.exit(1)
 
-    log_list = []
     path = sys.argv[1]
     filelist = sys.argv[2]
     fsguard_binary = sys.argv[3]
@@ -162,7 +169,8 @@ if __name__ == "__main__":
     if "--log-file" in sys.argv:
         log_file_index = sys.argv.index("--log-file")
         log_file = (
-            sys.argv[log_file_index + 1] if log_file_index + 1 < len(sys.argv) else None
+            sys.argv[log_file_index + 1] if log_file_index +
+            1 < len(sys.argv) else None
         )
 
     main(
