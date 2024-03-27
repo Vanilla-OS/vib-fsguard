@@ -19,6 +19,30 @@ import os
 import stat
 import hashlib
 import sys
+import datetime
+
+from os.path import isfile
+
+
+def log(message: str) -> None:
+    """
+    Logs a message with a timestamp and adds it to the global log list.
+
+    Parameters:
+    message (str): The message to log.
+    """
+    timestamp = datetime.datetime.now().strftime("[%Y-%m-%d %H:%M:%S]")
+    log_list.append(f"{timestamp} {message}")
+    print(message)
+
+
+def print_help() -> None:
+    """
+    Prints the help message for using the script.
+    """
+    log(
+        "Usage: python genfilelist.py <path> <filelist> <fsguard_binary> [--verbose] [--log-file <logfile>]"
+    )
 
 
 def is_suid(path: str) -> bool:
@@ -27,6 +51,9 @@ def is_suid(path: str) -> bool:
 
     Parameters:
     path (str): The file to check
+
+    Returns:
+    bool: True if the suid bit is set, False otherwise.
     """
     binary = os.stat(path)
     if binary.st_mode & stat.S_ISUID == 2048:
@@ -60,39 +87,96 @@ def calc_checksum(file: str) -> str:
     Returns:
     str: The calculated checksum
     """
-    sha1 = hashlib.sha1()
+    data = None
     with open(file, "rb") as f:
         data = f.read()
-        sha1.update(data)
-    return sha1.hexdigest()
+    hash = hashlib.sha1(data).hexdigest()
+
+    log(f"Checksum: {hash}")
+
+    return hash
 
 
-def main(path: str, filelist: str, fsguard_binary: str):
+def main(
+    path: str,
+    filelist: str,
+    fsguard_binary: str,
+    verbose: bool = False,
+    log_file: str = None,
+) -> None:
+    """
+    Generates a file list with checksums and suid information for files in a given path.
+
+    Parameters:
+    path (str): The path to scan for files.
+    filelist (str): The file to store the generated file list.
+    fsguard_binary (str): The path to the fsguard binary.
+    verbose (bool, optional): Enable verbose mode. Defaults to False.
+    log_file (str, optional): Specify a log file to save verbose output. Defaults to None.
+    """
     binaries: list[str] = []
     for dirpath, _, filenames in os.walk(path):
         for file in filenames:
-            if not fsguard_binary.strip() in dirpath + "/" + file:
+            if fsguard_binary.strip() not in dirpath + "/" + file:
                 filepath = dirpath + "/" + file
-                filepath = os.path.abspath(
-                    dirpath + "/" + get_symlink(filepath)
-                    if get_symlink(filepath) != ""
-                    else filepath
-                )
-                if not os.path.isfile(filepath):
-                    filepath = os.path.abspath(get_symlink(dirpath + "/" + file))
+
+                # Check if file is symlink, skip file if symlink is broken
+                file_link = get_symlink(filepath)
+                if file_link:
+                    if not isfile(file_link):
+                        continue
+                    filepath = os.path.abspath(dirpath + "/" + file_link)
+
+                if not isfile(filepath):
+                    filepath = os.path.abspath(
+                        get_symlink(dirpath + "/" + file))
                 suid = is_suid(filepath)
+
+                log(f"Processing: {filepath}")
 
                 binaries.append(
                     "{} #FSG# {} #FSG# {}".format(
-                        filepath, calc_checksum(filepath), "true" if suid else "false"
+                        filepath, calc_checksum(
+                            filepath), "true" if suid else "false"
                     )
                 )
+
+                log(f"Processed: {filepath}\n")
+
     if not os.path.exists(filelist):
         file = open(filelist, "x")
         file.close()
     with open(filelist, "a") as file:
         file.write("\n".join(binaries) + "\n")
 
+    if log_file:
+        with open(log_file, "w") as log_file:
+            log_file.write("\n".join(log_list) + "\n")
+
 
 if __name__ == "__main__":
-    main(path=sys.argv[1], filelist=sys.argv[2], fsguard_binary=sys.argv[3])
+    log_list = []
+    if len(sys.argv) < 4 or "--help" in sys.argv:
+        print_help()
+        sys.exit(1)
+
+    path = sys.argv[1]
+    filelist = sys.argv[2]
+    fsguard_binary = sys.argv[3]
+    verbose = "--verbose" in sys.argv
+    log_file = None
+
+    if "--log-file" in sys.argv:
+        log_file_index = sys.argv.index("--log-file")
+        log_file = (
+            sys.argv[log_file_index + 1] if log_file_index +
+            1 < len(sys.argv) else None
+        )
+
+    main(
+        path=path,
+        filelist=filelist,
+        fsguard_binary=fsguard_binary,
+        verbose=verbose,
+        log_file=log_file,
+    )
