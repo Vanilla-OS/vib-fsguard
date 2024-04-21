@@ -22,11 +22,11 @@ jobs:
     - name: Build
       run: |
         go get ./...
-        go build -trimpath -buildmode=plugin -o plugin.so -v ./...
+        go build -buildmode=c-shared -o fsguard.so -v ./...
 
     - name: Upload an artifact
       uses: actions/upload-artifact@v4
       with:
         Name: Vib plugin
-        path: ./plugin.so
+        path: ./fsguard.so
 

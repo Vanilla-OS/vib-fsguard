@@ -4,23 +4,25 @@
 package main
 
 import (
+	"C"
+	"encoding/json"
 	"fmt"
-	"github.com/mitchellh/mapstructure"
-	"github.com/vanilla-os/vib/api"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/vanilla-os/vib/api"
 )
 
 type FsGuardModule struct {
 	Name string `json:"name"`
 	Type string `json:"type"`
 
-	CustomFsGuard   bool     `json:"customfsguard"`
-	FsGuardLocation string   `json:"fsguardlocation`
-	GenerateKey     bool     `json:"genkey"`
-	KeyPath         string   `json:"keypath"`
-	FilelistPaths   []string `json:"filelistpaths"`
+	CustomFsGuard   bool     `json:"CustomFsGuard"`
+	FsGuardLocation string   `json:"FsGuardLocation"`
+	GenerateKey     bool     `json:"GenerateKey"`
+	KeyPath         string   `json:"KeyPath"`
+	FilelistPaths   []string `json:"FilelistPaths"`
 }
 
 var FSGUARD_URL string = "https://github.com/linux-immutability-tools/FsGuard/releases/download/v0.1.2-2/FsGuard_0.1.2-2_linux_amd64.tar.gz"
@@ -33,7 +35,7 @@ var prepCommands []string
 var mainCommands []string
 var cleanCommands []string
 
-func fetchFsGuard(module FsGuardModule, recipe *api.Recipe) error {
+func fetchFsGuard(module *FsGuardModule, recipe *api.Recipe) error {
 	var source api.Source
 	source = api.Source{URL: FSGUARD_URL, Type: "tar", Checksum: FSGUARD_CHECKSUM}
 	err := api.DownloadSource(recipe.DownloadsPath, source, module.Name)
@@ -44,7 +46,7 @@ func fetchFsGuard(module FsGuardModule, recipe *api.Recipe) error {
 	return err
 }
 
-func fetchFileListScript(module FsGuardModule, recipe *api.Recipe) error {
+func fetchFileListScript(module *FsGuardModule, recipe *api.Recipe) error {
 	var source api.Source
 	source = api.Source{URL: GENFILELIST_URL, Type: "single", Checksum: GENFILELIST_CHECKSUM}
 	api.DownloadTarSource(recipe.DownloadsPath, source, module.Name)
@@ -61,7 +63,8 @@ func fetchFileListScript(module FsGuardModule, recipe *api.Recipe) error {
 	return nil
 }
 
-func signFileList(module FsGuardModule) {
+func signFileList(module *FsGuardModule) {
+	fmt.Println("In signFileList")
 	mainCommands = append(mainCommands, fmt.Sprintf("minisign -Sm /FsGuard/filelist -p %s/minisign.pub -s %s/minisign.key", module.KeyPath, module.KeyPath))
 	mainCommands = append(mainCommands, "touch /FsGuard/signature")
 	mainCommands = append(mainCommands, "echo -n \"----begin attach----\" >> /FsGuard/signature")
@@ -71,19 +74,28 @@ func signFileList(module FsGuardModule) {
 	mainCommands = append(mainCommands, "cat /FsGuard/signature >> /sources/FsGuard")
 }
 
-func BuildModule(moduleInterface interface{}, recipe *api.Recipe) (string, error) {
-	var module FsGuardModule
-	err := mapstructure.Decode(moduleInterface, &module)
+//export BuildModule
+func BuildModule(moduleInterface *C.char, recipeInterface *C.char) *C.char {
+	var module *FsGuardModule
+	var recipe *api.Recipe
+
+	err := json.Unmarshal([]byte(C.GoString(moduleInterface)), &module)
 	if err != nil {
-		return "", err
+		return C.CString(fmt.Sprintf("ERROR: %s", err.Error()))
 	}
+
+	err = json.Unmarshal([]byte(C.GoString(recipeInterface)), &recipe)
+	if err != nil {
+		return C.CString(fmt.Sprintf("ERROR: %s", err.Error()))
+	}
+
 	err = fetchFsGuard(module, recipe)
 	if err != nil {
-		return "", err
+		return C.CString(fmt.Sprintf("ERROR: %s", err.Error()))
 	}
 	err = fetchFileListScript(module, recipe)
 	if err != nil {
-		return "", err
+		return C.CString(fmt.Sprintf("ERROR: %s", err.Error()))
 	}
 
 	cleanCommands = append(cleanCommands, fmt.Sprintf("mv /sources/FsGuard %s", module.FsGuardLocation))
@@ -93,7 +105,7 @@ func BuildModule(moduleInterface interface{}, recipe *api.Recipe) (string, error
 		cleanCommands = append(cleanCommands, "rm ./minisign.key ./minisign.pub")
 		module.KeyPath = "./"
 	} else if len(strings.TrimSpace(module.KeyPath)) == 0 {
-		return "", fmt.Errorf("Keypath not specified and GenerateKey set to false. Cannot proceed")
+		return C.CString("ERROR: Keypath not specified and GenerateKey set to false. Cannot proceed")
 	}
 
 	for _, listDirectories := range module.FilelistPaths {
@@ -104,5 +116,7 @@ func BuildModule(moduleInterface interface{}, recipe *api.Recipe) (string, error
 
 	cmd := append(append(prepCommands, mainCommands...), cleanCommands...)
 
-	return strings.Join(cmd, " && "), nil
+	return C.CString(strings.Join(cmd, " && "))
 }
+
+func main() {}
