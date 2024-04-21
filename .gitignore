@@ -1,2 +1,4 @@
 filelist
 log.txt
+*.h
+*.so
