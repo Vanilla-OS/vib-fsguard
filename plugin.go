@@ -35,6 +35,15 @@ var prepCommands []string
 var mainCommands []string
 var cleanCommands []string
 
+// Helper functions for tests
+// TODO: move to api
+func convertToCString(s string) *C.char {
+	return C.CString(s)
+}
+func convertToGoString(s *C.char) string {
+	return C.GoString(s)
+}
+
 func fetchFsGuard(module *FsGuardModule, recipe *api.Recipe) error {
 	var source api.Source
 	source = api.Source{URL: FSGUARD_URL, Type: "tar", Checksum: FSGUARD_CHECKSUM}
@@ -78,6 +87,11 @@ func signFileList(module *FsGuardModule) {
 func BuildModule(moduleInterface *C.char, recipeInterface *C.char) *C.char {
 	var module *FsGuardModule
 	var recipe *api.Recipe
+
+	// Clean command arrays for testcases
+	prepCommands = []string{}
+	mainCommands = []string{}
+	cleanCommands = []string{}
 
 	err := json.Unmarshal([]byte(C.GoString(moduleInterface)), &module)
 	if err != nil {
