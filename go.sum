@@ -1,8 +1,2 @@
-github.com/mitchellh/mapstructure v1.5.0 h1:jeMsZIYE/09sWLaz43PL7Gy6RuMjD2eJVyuac5Z2hdY=
-github.com/mitchellh/mapstructure v1.5.0/go.mod h1:bFUtVrKA4DC2yAKiSyO/QUcy7e+RRV2QTWOzhPopBRo=
-github.com/vanilla-os/vib/api v0.0.0-20231203164136-c843eaca2af6 h1:J9h3w+pi9ZhhXDS+d/9IxWNbJ4hSMlUU8HFrF5RTtWE=
-github.com/vanilla-os/vib/api v0.0.0-20231203164136-c843eaca2af6/go.mod h1:vjJzDfFxfFHN5O2hcMwGM9De3+H9gGa00Pr3Um6EmCA=
-github.com/vanilla-os/vib/api v0.0.0-20240323151200-ee1fb88cbbfa h1:j1itnO1xevZdHFS9cXJ7aSiG0OoHnSRVgBKaEMevFO4=
-github.com/vanilla-os/vib/api v0.0.0-20240323151200-ee1fb88cbbfa/go.mod h1:vjJzDfFxfFHN5O2hcMwGM9De3+H9gGa00Pr3Um6EmCA=
-github.com/vanilla-os/vib/api v0.0.0-20240331150207-852011e4d96f h1:sRPpotRlyj3Qx4ftt5oYf7JQuIYTQwwPq93xomWaIKQ=
-github.com/vanilla-os/vib/api v0.0.0-20240331150207-852011e4d96f/go.mod h1:vjJzDfFxfFHN5O2hcMwGM9De3+H9gGa00Pr3Um6EmCA=
+github.com/vanilla-os/vib/api v0.0.0-20240618173922-1485e58729d9 h1:NA3V/7s4eofD/VSzxlRUQjIW3wStvqtch2Lsi/2blFU=
+github.com/vanilla-os/vib/api v0.0.0-20240618173922-1485e58729d9/go.mod h1:vjJzDfFxfFHN5O2hcMwGM9De3+H9gGa00Pr3Um6EmCA=
