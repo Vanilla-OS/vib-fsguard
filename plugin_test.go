@@ -1,3 +1,6 @@
+// Copyright 2024, axtlos <axtlos@disroot.org>
+// SPDX-License-Identifier: GPL-3.0-ONLY
+
 package main
 
 import (
