@@ -28,8 +28,8 @@ type FsGuardModule struct {
 var FSGUARD_URL string = "https://github.com/linux-immutability-tools/FsGuard/releases/download/v0.1.2-2/FsGuard_0.1.2-2_linux_amd64.tar.gz"
 var FSGUARD_CHECKSUM string = "b4aa058e4c4828ac57335e8cabd6b3baeff660ff524aa71069c3f56fd0445335"
 
-var GENFILELIST_URL string = "https://raw.githubusercontent.com/Vanilla-OS/vib-fsguard/main/genfilelist.py"
-var GENFILELIST_CHECKSUM string = "55d575f65613a2de43344f9502734e001a89a036670f6e44e9292a6d33beeb64"
+var GENFILELIST_URL string = "https://raw.githubusercontent.com/Vanilla-OS/vib-fsguard/3323f7c3c3f8459a64b97ad408d805edc5520c8d/genfilelist.py"
+var GENFILELIST_CHECKSUM string = "22658b7246d7a38c71d0c0fa64fd073ea7867da08344365242873f003abff8c5"
 
 var prepCommands []string
 var mainCommands []string
