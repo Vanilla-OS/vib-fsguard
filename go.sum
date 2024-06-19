@@ -1,2 +1,4 @@
+github.com/mitchellh/mapstructure v1.5.0 h1:jeMsZIYE/09sWLaz43PL7Gy6RuMjD2eJVyuac5Z2hdY=
+github.com/mitchellh/mapstructure v1.5.0/go.mod h1:bFUtVrKA4DC2yAKiSyO/QUcy7e+RRV2QTWOzhPopBRo=
 github.com/vanilla-os/vib/api v0.0.0-20240618173922-1485e58729d9 h1:NA3V/7s4eofD/VSzxlRUQjIW3wStvqtch2Lsi/2blFU=
 github.com/vanilla-os/vib/api v0.0.0-20240618173922-1485e58729d9/go.mod h1:vjJzDfFxfFHN5O2hcMwGM9De3+H9gGa00Pr3Um6EmCA=
