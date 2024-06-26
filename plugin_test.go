@@ -32,11 +32,11 @@ var test = []testCases{
 var recipe = "{\"Name\":\"fsguard unit test\",\"Id\":\"fsguard\",\"Stages\":[{\"id\":\"test\",\"base\":\"test:latest\",\"singlelayer\":false,\"copy\":null,\"labels\":null,\"env\":null,\"adds\":null,\"args\":null,\"runs\":null,\"expose\":null,\"cmd\":null,\"modules\":[{}],\"Entrypoint\":null}],\"Path\":\"/fakepath/recipe.yml\",\"ParentPath\":\"/fakepath\",\"DownloadsPath\":\"/tmp/fsguard/downloads\",\"SourcesPath\":\"/tmp/fsguard/sources\",\"PluginPath\":\"/plugins\",\"Containerfile\":\"/Containerfile\"}"
 
 func TestBuildModule(t *testing.T) {
-	err := os.MkdirAll("/tmp/fsguard/downloads", 0777)
+	err := os.MkdirAll("/tmp/fsguard/downloads", 0o777)
 	if err != nil {
 		t.Errorf("%s", err)
 	}
-	err = os.MkdirAll("/tmp/fsguard/sources", 0777)
+	err = os.MkdirAll("/tmp/fsguard/sources", 0o777)
 	if err != nil {
 		t.Errorf("%s", err)
 	}
@@ -49,18 +49,16 @@ func TestBuildModule(t *testing.T) {
 		if err != nil {
 			t.Errorf("%s", err)
 		}
-		output := convertToCString("")
 		moduleInterface, err := json.Marshal(testCase.module)
 		if err != nil {
 			t.Errorf("Error in json %s", err.Error())
 		}
-		output = BuildModule(convertToCString(string(moduleInterface)), convertToCString(recipe))
+		output := BuildModule(convertToCString(string(moduleInterface)), convertToCString(recipe))
 		if convertToGoString(output) != testCase.expected {
 			t.Errorf("Output %s not equivalent to expected %s", convertToGoString(output), testCase.expected)
 		} else {
-			fmt.Printf("-- Testcase %d succeeded --\n", i)
+			fmt.Printf("-- Testcase %d succeeded --\n", i+1)
 		}
 	}
 	os.RemoveAll("/tmp/fsguard")
-
 }
