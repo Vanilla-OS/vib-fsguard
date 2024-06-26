@@ -25,28 +25,34 @@ type FsGuardModule struct {
 	FilelistPaths   []string `json:"FilelistPaths"`
 }
 
-var FSGUARD_URL string = "https://github.com/linux-immutability-tools/FsGuard/releases/download/v0.1.2-2/FsGuard_0.1.2-2_linux_amd64.tar.gz"
-var FSGUARD_CHECKSUM string = "b4aa058e4c4828ac57335e8cabd6b3baeff660ff524aa71069c3f56fd0445335"
+var (
+	FSGUARD_URL      string = "https://github.com/linux-immutability-tools/FsGuard/releases/download/v0.1.2-2/FsGuard_0.1.2-2_linux_amd64.tar.gz"
+	FSGUARD_CHECKSUM string = "b4aa058e4c4828ac57335e8cabd6b3baeff660ff524aa71069c3f56fd0445335"
+)
 
-var GENFILELIST_URL string = "https://raw.githubusercontent.com/Vanilla-OS/vib-fsguard/3323f7c3c3f8459a64b97ad408d805edc5520c8d/genfilelist.py"
-var GENFILELIST_CHECKSUM string = "22658b7246d7a38c71d0c0fa64fd073ea7867da08344365242873f003abff8c5"
+var (
+	GENFILELIST_URL      string = "https://raw.githubusercontent.com/Vanilla-OS/vib-fsguard/3323f7c3c3f8459a64b97ad408d805edc5520c8d/genfilelist.py"
+	GENFILELIST_CHECKSUM string = "22658b7246d7a38c71d0c0fa64fd073ea7867da08344365242873f003abff8c5"
+)
 
-var prepCommands []string
-var mainCommands []string
-var cleanCommands []string
+var (
+	prepCommands  []string
+	mainCommands  []string
+	cleanCommands []string
+)
 
 // Helper functions for tests
 // TODO: move to api
 func convertToCString(s string) *C.char {
 	return C.CString(s)
 }
+
 func convertToGoString(s *C.char) string {
 	return C.GoString(s)
 }
 
 func fetchFsGuard(module *FsGuardModule, recipe *api.Recipe) error {
-	var source api.Source
-	source = api.Source{URL: FSGUARD_URL, Type: "tar", Checksum: FSGUARD_CHECKSUM}
+	source := api.Source{URL: FSGUARD_URL, Type: "tar", Checksum: FSGUARD_CHECKSUM}
 	err := api.DownloadSource(recipe.DownloadsPath, source, module.Name)
 	if err != nil {
 		return err
@@ -56,14 +62,13 @@ func fetchFsGuard(module *FsGuardModule, recipe *api.Recipe) error {
 }
 
 func fetchFileListScript(module *FsGuardModule, recipe *api.Recipe) error {
-	var source api.Source
-	source = api.Source{URL: GENFILELIST_URL, Type: "single", Checksum: GENFILELIST_CHECKSUM}
+	source := api.Source{URL: GENFILELIST_URL, Type: "single", Checksum: GENFILELIST_CHECKSUM}
 	api.DownloadTarSource(recipe.DownloadsPath, source, module.Name)
-	err := os.MkdirAll(filepath.Join(recipe.SourcesPath, module.Name), 0777)
+	err := os.MkdirAll(filepath.Join(recipe.SourcesPath, module.Name), 0o777)
 	if err != nil {
 		return err
 	}
-	err = os.Rename(filepath.Join(recipe.DownloadsPath, module.Name), filepath.Join(recipe.SourcesPath, module.Name, "genfilelist.py"))
+	err = os.Rename(filepath.Join(recipe.DownloadsPath, module.Name+".tar"), filepath.Join(recipe.SourcesPath, module.Name, "genfilelist.py"))
 	if err != nil {
 		return err
 	}
