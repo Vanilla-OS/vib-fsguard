@@ -85,7 +85,7 @@ func signFileList(module *FsGuardModule) {
 	mainCommands = append(mainCommands, "cat /FsGuard/filelist.minisig >> /FsGuard/signature")
 	mainCommands = append(mainCommands, "echo -n \"----begin second attach----\" >> /FsGuard/signature")
 	mainCommands = append(mainCommands, fmt.Sprintf("tail -n1 %s/minisign.pub >> /FsGuard/signature", module.KeyPath))
-	mainCommands = append(mainCommands, "cat /FsGuard/signature >> /sources/FsGuard")
+	mainCommands = append(mainCommands, fmt.Sprintf("cat /FsGuard/signature >> /sources/%s/FsGuard", module.Name))
 }
 
 //export BuildModule
@@ -117,7 +117,7 @@ func BuildModule(moduleInterface *C.char, recipeInterface *C.char) *C.char {
 		return C.CString(fmt.Sprintf("ERROR: %s", err.Error()))
 	}
 
-	cleanCommands = append(cleanCommands, fmt.Sprintf("mv /sources/FsGuard %s", module.FsGuardLocation))
+	cleanCommands = append(cleanCommands, fmt.Sprintf("mv /sources/%s/FsGuard %s", module.Name, module.FsGuardLocation))
 
 	if module.GenerateKey {
 		prepCommands = append(prepCommands, "minisign -WG -s ./minisign.key")
