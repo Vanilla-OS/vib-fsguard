@@ -88,6 +88,20 @@ func signFileList(module *FsGuardModule) {
 	mainCommands = append(mainCommands, fmt.Sprintf("cat /FsGuard/signature >> /sources/%s/FsGuard", module.Name))
 }
 
+//export PlugInfo
+func PlugInfo() *C.char {
+	plugininfo := &api.PluginInfo{
+		Name: "fsguard",
+		Type: api.BuildPlugin
+	}
+	pluginjson, err := json.Marshal(plugininfo)
+	if err != nil {
+		return C.CString(fmt.Sprintf("ERROR: %s", err.Error()))
+	}
+	return C.CString(string(pluginjson))
+}
+
+
 //export BuildModule
 func BuildModule(moduleInterface *C.char, recipeInterface *C.char) *C.char {
 	var module *FsGuardModule
