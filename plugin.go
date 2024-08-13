@@ -92,7 +92,7 @@ func signFileList(module *FsGuardModule) {
 func PlugInfo() *C.char {
 	plugininfo := &api.PluginInfo{
 		Name: "fsguard",
-		Type: api.BuildPlugin
+		Type: api.BuildPlugin,
 	}
 	pluginjson, err := json.Marshal(plugininfo)
 	if err != nil {
