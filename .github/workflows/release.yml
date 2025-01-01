@@ -36,6 +36,6 @@ jobs:
     - name: Attest Generated Files
       if: github.repository == 'Vanilla-OS/vib-fsguard'
       id: attest
-      uses: actions/attest-build-provenance@v1
+      uses: actions/attest-build-provenance@v2
       with:
         subject-path: 'fsguard.so'
