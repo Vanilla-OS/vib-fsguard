@@ -93,6 +93,7 @@ func PlugInfo() *C.char {
 	plugininfo := &api.PluginInfo{
 		Name: "fsguard",
 		Type: api.BuildPlugin,
+		UseContainerCmds: false,
 	}
 	pluginjson, err := json.Marshal(plugininfo)
 	if err != nil {

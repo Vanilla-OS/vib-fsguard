@@ -4,3 +4,5 @@ github.com/vanilla-os/vib/api v0.0.0-20240710093922-7cf30ad33093 h1:7NnTkMdojYFv
 github.com/vanilla-os/vib/api v0.0.0-20240710093922-7cf30ad33093/go.mod h1:vjJzDfFxfFHN5O2hcMwGM9De3+H9gGa00Pr3Um6EmCA=
 github.com/vanilla-os/vib/api v0.0.0-20240813120326-9720e4efcc84 h1:i4orhMjpCHOyG0C1W+yXTjuuAu9PmjLDM50AeBRm54I=
 github.com/vanilla-os/vib/api v0.0.0-20240813120326-9720e4efcc84/go.mod h1:vjJzDfFxfFHN5O2hcMwGM9De3+H9gGa00Pr3Um6EmCA=
+github.com/vanilla-os/vib/api v0.0.0-20250121093646-a245279abb9b h1:zIPHMZsTLvmo3R0jbkdOCJ59p/YR2Jeu9mseU6p8+nk=
+github.com/vanilla-os/vib/api v0.0.0-20250121093646-a245279abb9b/go.mod h1:vjJzDfFxfFHN5O2hcMwGM9De3+H9gGa00Pr3Um6EmCA=
