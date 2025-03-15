@@ -1,5 +1,5 @@
 module github.com/vanilla-os/vib-fsguard
 
-go 1.22
+go 1.24
 
-require github.com/vanilla-os/vib/api v0.0.0-20250121093646-a245279abb9b
+require github.com/vanilla-os/vib/api v0.0.0-20250312135012-b508191864d3
