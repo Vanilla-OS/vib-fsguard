@@ -53,7 +53,7 @@ func convertToGoString(s *C.char) string {
 
 func fetchFsGuard(module *FsGuardModule, recipe *api.Recipe) error {
 	source := api.Source{URL: FSGUARD_URL, Type: "tar", Checksum: FSGUARD_CHECKSUM}
-	err := api.DownloadSource(recipe.DownloadsPath, source, module.Name)
+	err := api.DownloadSource(recipe, source, module.Name)
 	if err != nil {
 		return err
 	}
