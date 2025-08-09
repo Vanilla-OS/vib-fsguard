@@ -53,7 +53,7 @@ func TestBuildModule(t *testing.T) {
 		if err != nil {
 			t.Errorf("Error in json %s", err.Error())
 		}
-		output := BuildModule(convertToCString(string(moduleInterface)), convertToCString(recipe))
+		output := BuildModule(convertToCString(string(moduleInterface)), convertToCString(recipe), convertToCString("amd64"))
 		if convertToGoString(output) != testCase.expected {
 			t.Errorf("Output %s not equivalent to expected %s", convertToGoString(output), testCase.expected)
 		} else {
