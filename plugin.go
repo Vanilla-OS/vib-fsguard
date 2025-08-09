@@ -26,8 +26,9 @@ type FsGuardModule struct {
 }
 
 var (
-	FSGUARD_URL      string = "https://github.com/linux-immutability-tools/FsGuard/releases/download/v0.1.2-2/FsGuard_0.1.2-2_linux_amd64.tar.gz"
-	FSGUARD_CHECKSUM string = "b4aa058e4c4828ac57335e8cabd6b3baeff660ff524aa71069c3f56fd0445335"
+	FSGUARD_URL string = "https://github.com/linux-immutability-tools/FsGuard/releases/download/v0.1.2-2/FsGuard_0.1.2-2_linux_%s.tar.gz"
+	FSGUARD_CHECKSUM_AMD64 string = "b4aa058e4c4828ac57335e8cabd6b3baeff660ff524aa71069c3f56fd0445335"
+	FSGUARD_CHECKSUM_ARM64 string = "fe91180b3057971285ad1bddfc543b2dfe9752b3bf53753638c7cbbce155a256"
 )
 
 var (
@@ -51,8 +52,18 @@ func convertToGoString(s *C.char) string {
 	return C.GoString(s)
 }
 
-func fetchFsGuard(module *FsGuardModule, recipe *api.Recipe) error {
-	source := api.Source{URL: FSGUARD_URL, Type: "tar", Checksum: FSGUARD_CHECKSUM}
+func fetchFsGuard(module *FsGuardModule, recipe *api.Recipe, arch string) error {
+	url := fmt.Sprintf(FSGUARD_URL, arch)
+	var checksum string
+	switch arch {
+	case "amd64":
+		checksum = FSGUARD_CHECKSUM_AMD64
+	case "arm64":
+		checksum = FSGUARD_CHECKSUM_ARM64
+	default:
+		return fmt.Errorf("Unsupported architecture: %s", arch)
+	}
+	source := api.Source{URL: url, Type: "tar", Checksum: checksum}
 	err := api.DownloadSource(recipe, source, module.Name)
 	if err != nil {
 		return err
@@ -104,7 +115,7 @@ func PlugInfo() *C.char {
 
 
 //export BuildModule
-func BuildModule(moduleInterface *C.char, recipeInterface *C.char) *C.char {
+func BuildModule(moduleInterface *C.char, recipeInterface *C.char, arch *C.char) *C.char {
 	var module *FsGuardModule
 	var recipe *api.Recipe
 
@@ -123,7 +134,7 @@ func BuildModule(moduleInterface *C.char, recipeInterface *C.char) *C.char {
 		return C.CString(fmt.Sprintf("ERROR: %s", err.Error()))
 	}
 
-	err = fetchFsGuard(module, recipe)
+	err = fetchFsGuard(module, recipe, C.GoString(arch))
 	if err != nil {
 		return C.CString(fmt.Sprintf("ERROR: %s", err.Error()))
 	}
