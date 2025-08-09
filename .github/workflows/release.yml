@@ -21,21 +21,26 @@ jobs:
       with:
         go-version-file: go.mod
 
+    - name: Install Build Dependencies
+      run: |
+        sudo apt update
+        sudo apt install gcc-aarch64-linux-gnu
+
     - name: Build
       run: |
         go get ./...
-        go build -buildmode=c-shared -o fsguard.so -v ./...
+        go build -buildmode=c-shared -o fsguard-amd64.so -v ./...
+        GOARCH=arm64 CGO_ENABLED=1 CC=aarch64-linux-gnu-gcc go build -buildmode=c-shared -o fsguard-arm64.so -v ./...
 
     - name: Upload Release Asset
       if: github.repository == 'Vanilla-OS/vib-fsguard'
       uses: softprops/action-gh-release@v2
       with:
-        files: |
-          fsguard.so
-    
+        files: fsguard*.so
+
     - name: Attest Generated Files
       if: github.repository == 'Vanilla-OS/vib-fsguard'
       id: attest
       uses: actions/attest-build-provenance@v1
       with:
-        subject-path: 'fsguard.so'
+        subject-path: 'fsguard*.so'

@@ -19,13 +19,19 @@ jobs:
       with:
         go-version-file: go.mod
 
+    - name: Install Build Dependencies
+      run: |
+        sudo apt update
+        sudo apt install gcc-aarch64-linux-gnu
+
     - name: Build
       run: |
         go get ./...
-        go build -buildmode=c-shared -o fsguard.so -v ./...
+        go build -buildmode=c-shared -o fsguard-amd64.so -v ./...
+        GOARCH=arm64 CGO_ENABLED=1 CC=aarch64-linux-gnu-gcc go build -buildmode=c-shared -o fsguard-arm64.so -v ./...
 
     - name: Upload an artifact
       uses: actions/upload-artifact@v4
       with:
         name: FSGuard
-        path: ./fsguard.so
+        path: ./fsguard*.so
