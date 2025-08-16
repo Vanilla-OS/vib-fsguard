@@ -19,13 +19,13 @@ var test = []testCases{
 	// No custom, location /fsguard, generate key, keypath /fsguard/keys, filelists /bin
 	{
 		FsGuardModule{Name: "testCase1", CustomFsGuard: false, FsGuardLocation: "/fsguard", GenerateKey: true, KeyPath: "/fsguard/keys", FilelistPaths: []string{"/bin"}},
-		"mkdir /FsGuard && chmod +x /sources/testCase1/genfilelist.py && minisign -WG -s ./minisign.key && python3 /sources/testCase1/genfilelist.py /bin /FsGuard/filelist /fsguard && minisign -Sm /FsGuard/filelist -p .//minisign.pub -s .//minisign.key && touch /FsGuard/signature && echo -n \"----begin attach----\" >> /FsGuard/signature && cat /FsGuard/filelist.minisig >> /FsGuard/signature && echo -n \"----begin second attach----\" >> /FsGuard/signature && tail -n1 .//minisign.pub >> /FsGuard/signature && cat /FsGuard/signature >> /sources/testCase1/FsGuard && mv /sources/testCase1/FsGuard /fsguard && rm ./minisign.key ./minisign.pub",
+		"mkdir /FsGuard && chmod +x /sources/testCase1/genfilelist.py && minisign -WG -s ./minisign.key && python3 /sources/testCase1/genfilelist.py /bin /FsGuard/filelist /fsguard && minisign -Sm /FsGuard/filelist -p .//minisign.pub -s .//minisign.key && touch /FsGuard/signature && echo -n \"----begin attach----\" >> /FsGuard/signature && cat /FsGuard/filelist.minisig >> /FsGuard/signature && echo -n \"----begin second attach----\" >> /FsGuard/signature && tail -n1 .//minisign.pub >> /FsGuard/signature && mv /sources/testCase1/FsGuard*/FsGuard /fsguard && cat /FsGuard/signature >> /fsguard && rm ./minisign.key ./minisign.pub",
 	},
 
 	// With custom, location /fsguard, dont generate key, keypath /fsguard/keys, filelists /bin
 	{
 		FsGuardModule{Name: "testCase2", CustomFsGuard: true, FsGuardLocation: "/fsguard", GenerateKey: false, KeyPath: "/fsguard/keys", FilelistPaths: []string{"/bin"}},
-		"mkdir /FsGuard && chmod +x /sources/testCase2/genfilelist.py && python3 /sources/testCase2/genfilelist.py /bin /FsGuard/filelist /fsguard && minisign -Sm /FsGuard/filelist -p /fsguard/keys/minisign.pub -s /fsguard/keys/minisign.key && touch /FsGuard/signature && echo -n \"----begin attach----\" >> /FsGuard/signature && cat /FsGuard/filelist.minisig >> /FsGuard/signature && echo -n \"----begin second attach----\" >> /FsGuard/signature && tail -n1 /fsguard/keys/minisign.pub >> /FsGuard/signature && cat /FsGuard/signature >> /sources/testCase2/FsGuard && mv /sources/testCase2/FsGuard /fsguard",
+		"mkdir /FsGuard && chmod +x /sources/testCase2/genfilelist.py && python3 /sources/testCase2/genfilelist.py /bin /FsGuard/filelist /fsguard && minisign -Sm /FsGuard/filelist -p /fsguard/keys/minisign.pub -s /fsguard/keys/minisign.key && touch /FsGuard/signature && echo -n \"----begin attach----\" >> /FsGuard/signature && cat /FsGuard/filelist.minisig >> /FsGuard/signature && echo -n \"----begin second attach----\" >> /FsGuard/signature && tail -n1 /fsguard/keys/minisign.pub >> /FsGuard/signature && mv /sources/testCase2/FsGuard*/FsGuard /fsguard && cat /FsGuard/signature >> /fsguard",
 	},
 }
 
